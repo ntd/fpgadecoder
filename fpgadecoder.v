@@ -29,7 +29,7 @@
 //
 //      forward = b ^ _a;
 //
-module decoder(output [15:0] cnt, input a, input b, input z);
+module fpgadecoder(output [15:0] cnt, input a, input b, input z);
     reg [15:0] cnt = 0;
     reg forward = 0;// Current direction, used when a step is skipped
     reg _a = 0;     // Previous state of a phase

@@ -1,16 +1,16 @@
-all: decoder
+all: fpgadecoder_tb
 
-decoder: decoder.v decoder_tb.v
+fpgadecoder_tb: fpgadecoder.v fpgadecoder_tb.v
 	iverilog -o $@ $^
 
-check: decoder fpgadecoder.dump
+check: fpgadecoder_tb fpgadecoder.dump
 	@tmpfile=$$(mktemp /tmp/fpgadecoder-XXXXXX.dump); \
-	vvp decoder > $$tmpfile && diff $$tmpfile fpgadecoder.dump; \
+	vvp fpgadecoder_tb > $$tmpfile && diff $$tmpfile fpgadecoder.dump; \
 	rv=$$?; \
 	rm -f $$tmpfile; \
 	exit $$rv
 
 clean:
-	rm -f decoder
+	rm -f fpgadecoder_tb
 
 .phony: clean check

@@ -1,4 +1,4 @@
-module decoder_tb;
+module fpgadecoder_tb;
     reg a, b, z;
     wire signed [15:0] cnt;
 
@@ -37,7 +37,7 @@ module decoder_tb;
         #5 $finish;
     end
 
-    decoder U0 (
+    fpgadecoder U0 (
         .cnt (cnt),
         .a (a),
         .b (b),
