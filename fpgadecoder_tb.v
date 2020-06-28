@@ -1,10 +1,11 @@
+/* verilator lint_off STMTDLY */
+
 module fpgadecoder_tb;
     reg a, b, z;
     wire signed [15:0] cnt;
 
     initial begin
         $display("A B Z");
-        $monitor("%b %b %b %d", a, b, z, cnt);
 
         a = 0;
         b = 0;
@@ -35,6 +36,10 @@ module fpgadecoder_tb;
         #5 z = 0;
 
         #5 $finish;
+    end
+
+    always @(cnt) begin
+        $display("%b %b %b %d", a, b, z, cnt);
     end
 
     fpgadecoder U0 (

@@ -1,3 +1,5 @@
+/* verilator lint_off UNOPTFLAT */
+
 // Decoding quadrature encoders with FPGA.
 //
 //           _______         _______
@@ -29,8 +31,7 @@
 //
 //      forward = b ^ _a;
 //
-module fpgadecoder(output [15:0] cnt, input a, input b, input z);
-    reg [15:0] cnt = 0;
+module fpgadecoder(output reg [15:0] cnt = 0, input a, input b, input z);
     reg forward = 0;// Current direction, used when a step is skipped
     reg _a = 0;     // Previous state of a phase
     reg _b = 0;     // Previous state of b phase
@@ -42,17 +43,17 @@ module fpgadecoder(output [15:0] cnt, input a, input b, input z);
         bchange = b ^ _b;
         if (achange & bchange) begin
             // Rotation too quick: one step skipped
-            cnt <= forward ? cnt + 2 : cnt - 2;
+            cnt = forward ? cnt + 2 : cnt - 2;
         end else if (achange | bchange) begin
             // Normal rotation
             forward = b ^ _a;
-            cnt <= forward ? cnt + 1 : cnt - 1;
+            cnt = forward ? cnt + 1 : cnt - 1;
         end
-        _a <= a;
-        _b <= b;
+        _a = a;
+        _b = b;
     end
 
     always @(posedge z) begin
-        cnt <= 0;
+        cnt = 0;
     end
 endmodule
