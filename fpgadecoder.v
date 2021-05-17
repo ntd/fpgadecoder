@@ -26,29 +26,32 @@
 //  1  1 |  0  1
 //  0  1 |  0  0
 //
-// In short, if b and _a are different the encoder is moving forward,
-// if they are equal it is moving backward. Translated in Verilog:
+// In short, if b and _a are differents the encoder is moving forward,
+// if they are equal it is moving backward. This explains why I have:
 //
-//      forward = b ^ _a;
+//      delta = b ^ _a ? +1 : -1;
 //
 module fpgadecoder(output reg [15:0] cnt = 0, input a, input b, input z);
-    reg forward = 0;// Current direction, used when a step is skipped
-    reg _a = 0;     // Previous state of a phase
-    reg _b = 0;     // Previous state of b phase
+    reg [15:0] delta = 0;   // Value to add to the counter
+    reg _a = 0;             // Previous state of A phase
+    reg _b = 0;             // Previous state of B phase
     reg achange, bchange;
 
     always @(a or b) begin
-        // Not sure this is the best way to reuse expressions
         achange = a ^ _a;
         bchange = b ^ _b;
         if (achange & bchange) begin
-            // Rotation too quick: one step skipped
-            cnt = forward ? cnt + 2 : cnt - 2;
+            // Both phases changed: rotation too quick! Add `delta`
+            // twice because at least one step has been skipped
+            cnt += delta + delta;
         end else if (achange | bchange) begin
-            // Normal rotation
-            forward = b ^ _a;
-            cnt = forward ? cnt + 1 : cnt - 1;
+            // Only one phase changed: one step rotation (common case)
+            delta = b ^ _a ? +1 : -1;
+            cnt += delta;
         end
+        // The no changes condition (both `achange` and `bchange` are
+        // OFF) is not handled because (1) it should never happen and
+        // (2) when it happens, I do not know what to do
         _a = a;
         _b = b;
     end
